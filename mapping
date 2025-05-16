@@ -1,0 +1,30 @@
+First we need to do genome indexing using STAR. For this you will need a fasta file of your genome and a gff file of your annotations
+
+module load star
+
+STAR --runThreadN 16 --runMode genomeGenerate --genomeDir /path/to/genomeDirectory --genomeFastaFiles /path/to/genome/fasta --sjdbGTFfile /path/to/annotations.gff --sjdbGTFtagExonParentTranscript Parent --sjdbOverhang 149"
+
+--genomeDir /path/to/genomeDirectory ##I would create a new directory to store all the output files
+
+Once this ran, multiple files will be created including a "Genome" file. Now you will use this to map your RNA reads back to the indexed genome. This pathway uses paired end sequencing reads
+
+Go to the folder where your RNA raw data is stored
+
+module load star
+STAR --runThreadN 16 --genomeDir /mmfs1/scratch/szm0260/bacch_hap1_scaffolds --readFilesIn rna1-1.fq,rna2-1.fq,rna3-1.fq, rna1-2.fq,rna2-2.fq,rna3-2.fq --outSAMattrRGline ID:rna1 , ID:rna2 , ID:rna3"
+
+Here, both paired end reads are used:
+rna1-1 and rna1-2
+rna2-1 and rna2-2
+rna 3-1 and rna3-2
+
+Once it runs, you will have mutiple outputs, one of them named "Aligned.out.sam". This is your alignment. You can replace the name.
+
+All alignments are .sam files. However, most downstream programs only work with .bam files
+This is the case for subread feature counts (which I will be using), so I will use samtools to convert all my SAM files to BAM files.
+
+samtools sort -n -o Aligned.out..bam Aligned.out.sam"
+
+
+
+
